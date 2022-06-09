@@ -1,0 +1,36 @@
+{
+  "name": "nodeAuth",
+  "version": "1.0.0",
+  "description": "My Moleculer-based microservice",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --envfile env/dev/.env",
+    "start": "moleculer-runner service.js",
+    "ci": "jest --watch",
+    "test": "jest --coverage"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "jest-cli": "^25.1.0",
+    "moleculer-repl": "^0.6.2"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "axios": "^0.27.2",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "moleculer": "^0.14.0",
+    "moleculer-web": "^0.10.4",
+    "nats": "^1.4.12",
+    "otp-generator": "^4.0.0"
+  },
+  "engines": {
+    "node": ">= 10.x.x"
+  }
+}
