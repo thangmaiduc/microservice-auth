@@ -17,56 +17,59 @@ module.exports = {
       onTick: async function (ctx) {
         console.log("checkThanhToan is started");
 
-        let data = await this.broker.call("cronJobs.say");
-        console.log(data);
-      },
-      runOnInit: function () {
-        console.log("JobHelloWorld is created");
-      },
-      manualStart: true,
-      timeZone: "America/Nipigon",
-    },
-    {
-      name: "JobHelloWorld",
-      cronTime: "* * * * *",
-      onTick: async function () {
-        console.log("JobHelloWorld ticked");
-         this.getLocalService("miniProgram")
-          .actions.test()
-          .then((data) => {
-            console.log("Oh!", data);
-          });
-        this.getLocalService("cronJob")
-          .actions.say()
+        this.getLocalService("miniProgram")
+          .actions.checkPayment()
           .then((data) => {
             console.log("Oh!", data);
           });
       },
       runOnInit: function () {
-        console.log("JobHelloWorld is created");
+        console.log("checkThanhToan is created");
       },
-      manualStart: true,
+      // manualStart: true,
       timeZone: "America/Nipigon",
     },
-    {
-      name: "JobWhoStartAnother",
-      cronTime: "* * * * *",
-      onTick: async function () {
-        console.log("JobWhoStartAnother ticked");
+    // {
+    //   name: "JobHelloWorld",
+    //   cronTime: "* * * * *",
+    //   onTick: async function () {
+    //     console.log("JobHelloWorld ticked");
+    //      this.getLocalService("miniProgram")
+    //       .actions.test()
+    //       .then((data) => {
+    //         console.log("Oh!", data);
+    //       });
+    //     this.getLocalService("cronJob")
+    //       .actions.say()
+    //       .then((data) => {
+    //         console.log("Oh!", data);
+    //       });
+    //   },
+    //   runOnInit: function () {
+    //     console.log("JobHelloWorld is created");
+    //   },
+    //   manualStart: true,
+    //   timeZone: "America/Nipigon",
+    // },
+    // {
+    //   name: "JobWhoStartAnother",
+    //   cronTime: "* * * * *",
+    //   onTick: async function () {
+    //     console.log("JobWhoStartAnother ticked");
 
-        var job = this.getJob("JobHelloWorld");
+    //     var job = this.getJob("JobHelloWorld");
         
-        if (!job.lastDate()) {
-          job.start();
-        } else {
-          console.log("JobHelloWorld is already started!");
-        }
-      },
-      runOnInit: function () {
-        console.log("JobWhoStartAnother is created");
-      },
-      timeZone: "America/Nipigon",
-    },
+    //     if (!job.lastDate()) {
+    //       job.start();
+    //     } else {
+    //       console.log("JobHelloWorld is already started!");
+    //     }
+    //   },
+    //   runOnInit: function () {
+    //     console.log("JobWhoStartAnother is created");
+    //   },
+    //   timeZone: "America/Nipigon",
+    // },
   ],
 
   actions: {

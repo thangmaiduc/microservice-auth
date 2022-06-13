@@ -37,15 +37,53 @@ module.exports = {
           amount: "number",
           ipnUrl: "string",
           description: "string",
-          
         },
-
       },
       handler: require("./actions/createOrder.action"),
     },
+    notifyPayment: {
+      rest: {
+        fullPath: "/orders/notify",
+        medthod: "POST",
+        // auth: {
+        //   strategies: ["Default"],
+        //   mode: "required", // 'required', 'optional', 'try'
+        // },
+      },
+      params: {
+        body: {
+          $$type: "object",
+          transaction: "number",
+          amount: "number",
+          description: "string",
+          state: "string",
+        },
+      },
+      handler: require("./actions/notifyPayment.action"),
+    },
+
+    getOrderInfo: {
+      rest: {
+        fullPath: "/orders/:transaction",
+        medthod: "GET",
+        auth: {
+          strategies: ["Default"],
+          mode: "required", // 'required', 'optional', 'try'
+        },
+      },
+
+      handler: require("./actions/getOrderInfo.action"),
+    },
+
     test() {
-      console.log('MINIPROGRAM TEST');  
-      
+      console.log("MINIPROGRAM TEST");
+    },
+
+    checkPayment: {
+      handler: require("./actions/checkPayment.action"),
+    },
+    test() {
+      console.log("MINIPROGRAM TEST");
     },
   },
 
