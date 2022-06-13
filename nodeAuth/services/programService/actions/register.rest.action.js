@@ -20,6 +20,10 @@ module.exports = async function (ctx) {
     payload.password = passwordEncrypt;
     // console.log(payload);
     const user =await ctx.call('userModel.create' ,[payload] );
+    const walletObj ={
+      userId: user.id,
+    }
+    const wallet =await ctx.call('walletModel.create' ,[walletObj] );
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRETKEY, {
       expiresIn: "3 days",
     });

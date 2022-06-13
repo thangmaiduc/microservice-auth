@@ -29,6 +29,5 @@ schema.plugin(autoIncrement.plugin, {
   incrementBy: 1,
 });
 
-
 const User = mongoose.model("User", schema);
 module.exports = User;

@@ -1,19 +1,18 @@
 "use strict";
 const DbService = require("moleculer-db");
 const MongooseAdapter = require("moleculer-db-adapter-mongoose");
-const mongoose = require("mongoose");
-const userModel = require("./model/userModel");
 const MongooseAction = require("moleculer-db-adapter-mongoose-action");
+const Wallet = require("./model/walletModel");
 
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
 module.exports = {
-  name: "userModel",
+  name: "walletModel",
   mixins: [DbService],
   adapter: new MongooseAdapter(process.env.MONGO_URI),
-  model: userModel,
+  model: Wallet,
   /**
    * Settings
    */
@@ -30,7 +29,7 @@ module.exports = {
   actions: {
     ...MongooseAction(),
 
-   
+    
   },
 
   /**

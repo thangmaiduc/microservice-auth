@@ -1,8 +1,7 @@
 "use strict";
 const DbService = require("moleculer-db");
 const MongooseAdapter = require("moleculer-db-adapter-mongoose");
-const mongoose = require("mongoose");
-const userModel = require("./model/userModel");
+const orderModel = require("./model/orderModel");
 const MongooseAction = require("moleculer-db-adapter-mongoose-action");
 
 /**
@@ -10,10 +9,10 @@ const MongooseAction = require("moleculer-db-adapter-mongoose-action");
  */
 
 module.exports = {
-  name: "userModel",
+  name: "orderModel",
   mixins: [DbService],
   adapter: new MongooseAdapter(process.env.MONGO_URI),
-  model: userModel,
+  model: orderModel,
   /**
    * Settings
    */
@@ -27,11 +26,8 @@ module.exports = {
   /**
    * Actions
    */
-  actions: {
-    ...MongooseAction(),
-
-   
-  },
+  actions: MongooseAction(),
+  
 
   /**
    * Events
