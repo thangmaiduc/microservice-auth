@@ -187,7 +187,10 @@ module.exports = {
   /**
    * Service started lifecycle event handler
    */
-  async started() {},
+  async started() {
+    
+    
+  },
 
   /**
    * Service stopped lifecycle event handler

@@ -13,7 +13,7 @@ module.exports = {
   crons: [
     {
       name: "checkThanhToan",
-      cronTime: "* * * * *",
+      cronTime: "0 * * * *",
       onTick: async function (ctx) {
         console.log("checkThanhToan is started");
 
@@ -94,7 +94,9 @@ module.exports = {
   /**
    * Service started lifecycle event handler
    */
-  async started() {},
+  async started() {
+   
+  },
 
   /**
    * Service stopped lifecycle event handler

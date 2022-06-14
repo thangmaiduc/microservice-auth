@@ -4,7 +4,7 @@ const orderContants = require("../constants/orderContants");
 
 module.exports = async function (ctx) {
   try {
-    const { transaction } = ctx.params.params;
+    const { transaction } = ctx.params.body;
     let userId = ctx.meta.userId;
     let order = await ctx.call("orderModel.findOne", [
       { transaction,userId  },

@@ -31,6 +31,10 @@ module.exports = async function (ctx) {
     if (_.get(order, "payMedthod", null) === orderContants.PAYMEDTHOD.PAYME) {
       let wallet = await ctx.call("walletModel.findOne", [{ userId }]);
       if (wallet.balance < amount) {
+        ctx.call("orderModel.findOneAndUpdate", [
+          { transaction: order.transaction },
+          { state: orderContants.STATE.CANCELED },
+        ]);
         return {
           code: 1001,
           message: "Số dư trong ví của bạn không đủ",

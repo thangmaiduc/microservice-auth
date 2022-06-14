@@ -12,9 +12,13 @@ module.exports = async function (ctx) {
     await Promise.all(
       orders.map(async (order) => {
         let twoHours = 1000 * 60 * 120;
-        if (new Date().getTime() - order.createdAt.getTime() < twoHours)
-          flag++;
-       
+        if (new Date().getTime() - order.createdAt.getTime() > twoHours) {
+          await ctx.call("orderModel.findOneAndUpdate", [
+            { transaction: order.transaction },
+            { state: orderContants.STATE.EXPIRED },
+          ]);
+          flag++
+        }
       })
     );
     console.log("Check payment finished: ", flag);

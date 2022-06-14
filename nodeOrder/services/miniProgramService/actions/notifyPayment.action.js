@@ -12,13 +12,13 @@ module.exports = async function (ctx) {
     //   state,
     // };
     let checkOrder = await ctx.call("orderModel.findOneAndUpdate", [
-      { transaction },
+      { transaction, state: orderContants.STATE.PENDING },
       { state },
     ]);
     if (!checkOrder) {
       return {
         code: 1001,
-        message: "Đơn thanh toán không tồn tại",
+        message: "Đơn thanh toán không tồn tại hoặc đã thanh toán",
       };
     }
 

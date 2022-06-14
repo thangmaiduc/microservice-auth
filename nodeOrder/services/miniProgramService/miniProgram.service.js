@@ -1,4 +1,7 @@
 "use strict";
+const _ = require("lodash");
+
+const orderContants = require('./constants/orderContants');
 
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -43,8 +46,8 @@ module.exports = {
     },
     notifyPayment: {
       rest: {
-        fullPath: "/orders/notify",
         medthod: "POST",
+        fullPath: "/orders/notify",
         // auth: {
         //   strategies: ["Default"],
         //   mode: "required", // 'required', 'optional', 'try'
@@ -56,7 +59,10 @@ module.exports = {
           transaction: "number",
           amount: "number",
           description: "string",
-          state: "string",
+          state:{
+            type: 'string',
+            enum: _.values(_.omit(orderContants.STATE,['PENDING']))
+          }
         },
       },
       handler: require("./actions/notifyPayment.action"),
@@ -64,11 +70,19 @@ module.exports = {
 
     getOrderInfo: {
       rest: {
-        fullPath: "/orders/:transaction",
         medthod: "GET",
+        fullPath: "/orders/",
         auth: {
           strategies: ["Default"],
           mode: "required", // 'required', 'optional', 'try'
+        },
+
+      },
+      params: {
+        body: {
+          $$type: "object",
+          transaction: "number",
+          
         },
       },
 
