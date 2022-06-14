@@ -1,5 +1,4 @@
 "use strict";
-const ApiGateway = require("moleculer-web");
 
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -117,7 +116,10 @@ module.exports = {
       rest: {
         method: "GET",
         fullPath: "/users/me",
-        auth: false,
+       auth: {
+          strategies: ["Default"],
+          mode: "required", // 'required', 'optional', 'try'
+        },
       },
       handler: require("./actions/getUserInfo.action"),
     },
@@ -134,40 +136,7 @@ module.exports = {
     },
   },
 
-  // add: {
-  //   rest: {
-  //     method: "POST",
-  //     fullPath: "/auth/login",
-  //     // auth: {
-  //     // 	strategies: ["Default"],
-  //     // 	mode: "try", // 'required', 'optional', 'try'
-  //     // },
-  //   },
-  //   params: {
-  //     body: {
-  //       $$type: "object",
-
-  //     },
-  //   },
-  //   handler: require("./actions/add.rest.action"),
-  // },
-  // edit: {
-  //   rest: {
-  //     method: "PUT",
-  //     fullPath: "/v1/Internal/MiniProgram/:miniProgramId",
-  //     // auth: {
-  //     // 	strategies: ["Default"],
-  //     // 	mode: "try", // 'required', 'optional', 'try'
-  //     // },
-  //   },
-  //   params: {
-  //     body: {
-  //       $$type: "object",
-  //     },
-  //   },
-  //   handler: require("./actions/edit.rest.action"),
-  // },
-  // },
+ 
 
   /**
    * Events
@@ -188,7 +157,7 @@ module.exports = {
    * Service started lifecycle event handler
    */
   async started() {
-    
+    // console.log(this.broker);
     
   },
 

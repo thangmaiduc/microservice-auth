@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const { MoleculerError } = require("moleculer").Errors;
-const orderContants = require("../constants/orderContants");
+const orderContants = require("../../miniProgramService/constants/orderContants");
 
 module.exports = async function (ctx) {
   try {

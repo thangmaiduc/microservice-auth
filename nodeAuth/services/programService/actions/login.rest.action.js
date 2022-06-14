@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const crypto = require("crypto-js");
+const bcrypt= require("bcryptjs");
 
 const { MoleculerError,MoleculerClientError } = require("moleculer").Errors;
 const jwt = require("jsonwebtoken");
@@ -17,10 +17,10 @@ module.exports = async function (ctx) {
         email
       );
     }
-    var bytes = crypto.AES.decrypt(user.password, process.env.JWT_SECRETKEY);
-    var passwordDecrypt = bytes.toString(crypto.enc.Utf8);
-    console.log(passwordDecrypt);
-    if (password !== passwordDecrypt) {
+    const isMatch=await bcrypt.compare(password,user.password)
+    let passwordHash= await bcrypt.hash(password,8)
+    console.log(passwordHash);
+    if(!isMatch) {
       throw new MoleculerError(
         "Email hoặc mật khẩu không hợp lệ",
         400,
@@ -48,6 +48,7 @@ module.exports = async function (ctx) {
       userId : user.id,
       expiredAt: date
     }
+    await ctx.call('tokenModel.deleteMany', [{ userId:ctx.meta.userId }]);
     await ctx.call('tokenModel.create', [tokenObj]);
 
     return {

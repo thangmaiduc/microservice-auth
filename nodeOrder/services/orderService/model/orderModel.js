@@ -46,9 +46,9 @@ const Schema = mongoose.Schema(
       enum: _.values(orderContants.STATE),
       default:'PENDING'
     },
-    payMedthod: {
+    payMethod: {
       type: String,
-      enum: _.values(orderContants.PAYMEDTHOD),
+      enum: _.values(orderContants.PAYMETHOD),
 	    default : 'PAYME'
     },
   },

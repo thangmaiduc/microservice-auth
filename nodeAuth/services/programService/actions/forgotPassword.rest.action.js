@@ -2,7 +2,7 @@ const _ = require("lodash");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { MoleculerError } = require("moleculer").Errors;
-const crypto = require('crypto-js')
+const bcrypt= require("bcryptjs");
 const otpGenerator = require("otp-generator");
 module.exports = async function (ctx) {
   try {
@@ -41,8 +41,9 @@ module.exports = async function (ctx) {
         } catch (error) {}
       });
       console.log(OTP);
-    var passwordEncrypt =await crypto.AES.encrypt(OTP, process.env.JWT_SECRETKEY).toString();
-    await ctx.call("userModel.updateOne", [{ email }, {password: passwordEncrypt}]);
+    // var passwordEncrypt =await crypto.AES.encrypt(OTP, process.env.JWT_SECRETKEY).toString();
+    let passwordHash = await bcrypt.hash(OTP, 8);
+    await ctx.call("userModel.updateOne", [{ email }, {password: passwordHash}]);
 
     return{ 
         msg: "Mật khẩu mới đã gửi tới email của bạn",

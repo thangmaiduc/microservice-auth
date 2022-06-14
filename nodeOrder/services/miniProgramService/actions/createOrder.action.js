@@ -4,7 +4,7 @@ const orderContants = require("../constants/orderContants");
 
 module.exports = async function (ctx) {
   try {
-    const { partnerTransaction, amount, ipnUrl, description, payMedthod } =
+    const { partnerTransaction, amount, ipnUrl, description, payMethod } =
       ctx.params.body;
     let userId = ctx.meta.userId;
     let objOrder = {
@@ -13,7 +13,7 @@ module.exports = async function (ctx) {
       ipnUrl,
       description,
       userId,
-      payMedthod,
+      payMethod,
     };
     let checkOrder = await ctx.call("orderModel.findOne", [
       { partnerTransaction },
@@ -28,7 +28,7 @@ module.exports = async function (ctx) {
     console.log(order);
     let res = {};
     let data = {};
-    if (_.get(order, "payMedthod", null) === orderContants.PAYMEDTHOD.PAYME) {
+    if (_.get(order, "payMethod", null) === orderContants.PAYMETHOD.PAYME) {
       let wallet = await ctx.call("walletModel.findOne", [{ userId }]);
       if (wallet.balance < amount) {
         ctx.call("orderModel.findOneAndUpdate", [

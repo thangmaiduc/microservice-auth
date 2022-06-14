@@ -6,7 +6,7 @@ module.exports = {
     CANCELED: "CANCELED",
     EXPIRED: "EXPIRED",
   },
-  PAYMEDTHOD: {
+  PAYMETHOD: {
     PAYME: "PAYME",
     ATMCARD: "ATMCARD",
     

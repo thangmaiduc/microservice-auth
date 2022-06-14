@@ -27,7 +27,7 @@ module.exports = {
     createOrder: {
       rest: {
         fullPath: "/orders",
-        medthod: "POST",
+        method: "POST",
         auth: {
           strategies: ["Default"],
           mode: "required", // 'required', 'optional', 'try'
@@ -46,7 +46,7 @@ module.exports = {
     },
     notifyPayment: {
       rest: {
-        medthod: "POST",
+        method: "POST",
         fullPath: "/orders/notify",
         // auth: {
         //   strategies: ["Default"],
@@ -70,7 +70,7 @@ module.exports = {
 
     getOrderInfo: {
       rest: {
-        medthod: "GET",
+        method: "GET",
         fullPath: "/orders/",
         auth: {
           strategies: ["Default"],
@@ -93,12 +93,8 @@ module.exports = {
       console.log("MINIPROGRAM TEST");
     },
 
-    checkPayment: {
-      handler: require("./actions/checkPayment.action"),
-    },
-    test() {
-      console.log("MINIPROGRAM TEST");
-    },
+  
+    
   },
 
   /**

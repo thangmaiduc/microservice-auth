@@ -1,5 +1,4 @@
 const _ = require("lodash");
-const crypto = require("crypto-js");
 
 const { MoleculerError, MoleculerClientError } = require("moleculer").Errors;
 const jwt = require("jsonwebtoken");
