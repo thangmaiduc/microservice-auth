@@ -19,6 +19,7 @@
     "moleculer-repl": "^0.6.2"
   },
   "dependencies": {
+    "await-async-foreach": "^1.0.3",
     "axios": "^0.27.2",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.1",

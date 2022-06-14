@@ -1,7 +1,7 @@
 "use strict";
 const _ = require("lodash");
 
-const orderContants = require('./constants/orderContants');
+const orderContants = require("./constants/orderContants");
 
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -37,7 +37,7 @@ module.exports = {
         body: {
           $$type: "object",
           partnerTransaction: "string",
-          amount: "number",
+          amount: "number|positive|min:1",
           ipnUrl: "string",
           description: "string",
         },
@@ -59,10 +59,10 @@ module.exports = {
           transaction: "number",
           amount: "number",
           description: "string",
-          state:{
-            type: 'string',
-            enum: _.values(_.omit(orderContants.STATE,['PENDING']))
-          }
+          state: {
+            type: "string",
+            enum: _.values(_.omit(orderContants.STATE, ["PENDING"])),
+          },
         },
       },
       handler: require("./actions/notifyPayment.action"),
@@ -76,13 +76,11 @@ module.exports = {
           strategies: ["Default"],
           mode: "required", // 'required', 'optional', 'try'
         },
-
       },
       params: {
         body: {
           $$type: "object",
           transaction: "number",
-          
         },
       },
 
@@ -92,9 +90,6 @@ module.exports = {
     test() {
       console.log("MINIPROGRAM TEST");
     },
-
-  
-    
   },
 
   /**

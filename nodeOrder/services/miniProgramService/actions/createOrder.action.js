@@ -30,21 +30,21 @@ module.exports = async function (ctx) {
     let data = {};
     if (_.get(order, "payMethod", null) === orderContants.PAYMETHOD.PAYME) {
       let wallet = await ctx.call("walletModel.findOne", [{ userId }]);
-      if (wallet.balance < amount) {
+      if (_.get(wallet, "balance", 0) < amount) {
         ctx.call("orderModel.findOneAndUpdate", [
           { transaction: order.transaction },
-          { state: orderContants.STATE.CANCELED },
+          { state: orderContants.STATE.FAILED },
         ]);
         return {
           code: 1001,
           message: "Số dư trong ví của bạn không đủ",
         };
       } else {
-        await ctx.call("walletModel.findOneAndUpdate", [
+        await ctx.call("walletModel.updateOne", [
           { userId },
           { balance: wallet.balance - amount },
         ]);
-        ctx.call("orderModel.findOneAndUpdate", [
+        await ctx.call("orderModel.updateOne", [
           { transaction: order.transaction },
           { state: orderContants.STATE.SUCCEEDED },
         ]);
@@ -54,7 +54,7 @@ module.exports = async function (ctx) {
     } else {
       res.message = "Tạo đơn hàng thanh cồng, vui lòng thanh toán tại link";
       res.code = 1000;
-      data.url = "https://google.com.vn";
+      data.url = "https://atmcard.payment.vn";
       data.transaction = order.transaction;
     }
     return {

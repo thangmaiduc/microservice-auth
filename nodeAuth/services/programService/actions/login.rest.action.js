@@ -17,9 +17,9 @@ module.exports = async function (ctx) {
         email
       );
     }
-    const isMatch=await bcrypt.compare(password,user.password)
-    let passwordHash= await bcrypt.hash(password,8)
-    console.log(passwordHash);
+    const isMatch=password===user.password?true:false
+    // let passwordHash= await bcrypt.hash(password,8)
+    // console.log(passwordHash);
     if(!isMatch) {
       throw new MoleculerError(
         "Email hoặc mật khẩu không hợp lệ",
