@@ -13,7 +13,7 @@ module.exports = {
   crons: [
     {
       name: "checkThanhToan",
-      cronTime: "* * * * *",
+      cronTime: "0 * * * *",
       onTick: async function (ctx) {
         console.log("checkThanhToan is started");
 

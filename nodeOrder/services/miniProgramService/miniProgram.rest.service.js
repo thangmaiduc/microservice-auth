@@ -8,7 +8,7 @@ const orderContants = require("./constants/orderContants");
  */
 
 module.exports = {
-  name: "miniProgram",
+  name: "miniProgram.rest",
 
   /**
    * Settings
@@ -42,7 +42,7 @@ module.exports = {
           description: "string",
         },
       },
-      handler: require("./actions/createOrder.action"),
+      handler: require("./actions/createOrder.rest.action"),
     },
     notifyPayment: {
       rest: {
@@ -65,7 +65,7 @@ module.exports = {
           },
         },
       },
-      handler: require("./actions/notifyPayment.action"),
+      handler: require("./actions/notifyPayment.rest.action"),
     },
 
     getOrderInfo: {
@@ -84,7 +84,7 @@ module.exports = {
         },
       },
 
-      handler: require("./actions/getOrderInfo.action"),
+      handler: require("./actions/getOrderInfo.rest.action"),
     },
 
     test() {

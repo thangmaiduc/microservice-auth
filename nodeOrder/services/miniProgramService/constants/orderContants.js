@@ -9,6 +9,5 @@ module.exports = {
   PAYMETHOD: {
     PAYME: "PAYME",
     ATMCARD: "ATMCARD",
-    
   },
 };
