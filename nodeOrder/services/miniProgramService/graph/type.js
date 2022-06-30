@@ -2,12 +2,14 @@ const gql = require("moleculer-apollo-server").moleculerGql;
 
 module.exports = gql`
   type Order {
-    getOrder(input: GetOrderInput!): GetOrderInfoResponse
+    getOrder(body: GetOrderInput!): GetOrderInfoResponse
     getOrders: ListOrderResponse
-    createOrder(input:OrderInput): CreateOrderInfoResponse
+    createOrder(input: OrderInput): CreateOrderInfoResponse
     notifyPayment(input: NotifyPaymentInput): NotifyPaymentResponse
+    pay(input: payInput): PayResponse
+    
   }
-  
+
   type OrderInfo {
     partnerTransaction: String
     amount: Int
@@ -15,7 +17,6 @@ module.exports = gql`
     description: String
     payMethod: PaymentMethodUITypeEnum
     state: OrderPaymentStateEnum
-    transaction: Int
     orderId: Int
     userId: Int
   }
@@ -35,12 +36,22 @@ module.exports = gql`
     successed: Boolean
     dataCreateOrderInfoResponse: DataCreateOrderInfoResponse
   }
+
   type DataCreateOrderInfoResponse {
-    transaction: Int
+    orderId: Int
     url: String
   }
   type NotifyPaymentResponse {
     message: String
     successed: Boolean
+  }
+  type PayResponse {
+    message: String
+    successed: Boolean
+    data: DataPayResponse
+  }
+  type DataPayResponse {
+    url: String
+    transaction: Int
   }
 `;

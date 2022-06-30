@@ -15,6 +15,9 @@ input NotifyPaymentInput{
     state: NotifyPaymentStateEnum!
 }
 input GetOrderInput{
-    transaction: Int!
+    orderId: Int!
+}
+input payInput{
+    orderId: Int!
 }
 `;

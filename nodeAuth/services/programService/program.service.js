@@ -1,4 +1,5 @@
 "use strict";
+const checkIsAuthenticated= require('./methods/checkIsAuthenticated');
 
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -10,6 +11,7 @@ module.exports = {
   /**
    * Dependencies
    */
+  mixins:[checkIsAuthenticated],
   dependencies: [],
 
   /**
@@ -34,7 +36,10 @@ module.exports = {
       rest: {
         method: "POST",
         fullPath: "/auth/login",
-        auth: false,
+        auth: {
+          strategies: ["Default"],
+          mode: "optional",
+        },
       },
       params: {
         body: {
@@ -113,6 +118,9 @@ module.exports = {
       },
     },
     userInfo: {
+      hooks:{
+        before:['checkIsAuthenticated']
+      },
       rest: {
         method: "GET",
         fullPath: "/users/me",

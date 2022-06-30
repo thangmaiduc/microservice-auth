@@ -38,7 +38,7 @@ module.exports = async function (ctx) {
         email
       );
     }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRETKEY, {
+    const token = jwt.sign({ userId: user._id, userAgent:ctx.meta.userAgent }, process.env.JWT_SECRETKEY, {
       expiresIn: "3 days",
     });
     let date = new Date();
@@ -46,6 +46,7 @@ module.exports = async function (ctx) {
     const tokenObj = {
       token,
       userId : user.id,
+      userAgent: ctx.meta.userAgent,
       expiredAt: date
     }
     await ctx.call('tokenModel.deleteMany', [{ userId:ctx.meta.userId }]);

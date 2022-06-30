@@ -5,7 +5,9 @@ const schema = mongoose.Schema({
   userId: {
     type:Number,
   },
-
+  deviceId:{
+    type: String,
+  },
   token: String,
  
   expiredAt: {

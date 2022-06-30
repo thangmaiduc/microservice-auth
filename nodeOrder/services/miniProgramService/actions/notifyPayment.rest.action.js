@@ -5,22 +5,40 @@ const orderContants = require("../constants/orderContants");
 module.exports = async function (ctx) {
   try {
     const { transaction, amount, state } = ctx.params.body;
-    console.log(typeof(transaction));
+    console.log(typeof transaction);
     // let objOrder = {
     //   transaction,
     //   amount,
     //   state,
     // };
-    let checkOrder = await ctx.call("orderModel.findOneAndUpdate", [
+    let payment = await ctx.call("paymentModel.findOneAndUpdate", [
       { transaction, state: orderContants.STATE.PENDING },
       { state },
     ]);
-    if (!checkOrder) {
+    if (!payment) {
       return {
         code: 1001,
-        message: "Đơn thanh toán không tồn tại hoặc đã thanh toán",
+        message: "Mã giao dịch không tồn tại",
       };
     }
+    let order = await ctx.call("orderModel.findOneAndUpdate", [
+      { orderId: payment.orderId, state: orderContants.STATE.PENDING },
+      { state },
+    ]);
+    if (!order) {
+      await ctx.call("paymentModel.updateOne", [
+        { transaction },
+        { state: orderContants.STATE.FAILED },
+      ]);
+      return {
+        code: 1001,
+        message: "Đơn hàng không tồn tại",
+      };
+    }
+
+    await ctx.call("supplierResponseModel.create", [
+      { transaction, amount, state },
+    ]);
 
     return {
       message: "Thành công",

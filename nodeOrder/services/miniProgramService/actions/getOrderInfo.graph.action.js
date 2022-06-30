@@ -4,11 +4,11 @@ const orderContants = require("../constants/orderContants");
 
 module.exports = async function (ctx) {
   try {
-    const { transaction } = ctx.params.input;
+    const { orderId } = ctx.params.body;
     let userId = ctx.meta.userId;
     console.log(ctx.params);
     let order = await ctx.call("orderModel.findOne", [
-      { transaction,userId  },
+      { orderId,userId  },
     ]);
     if(!order){
       return{

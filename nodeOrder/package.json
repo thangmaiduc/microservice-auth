@@ -24,6 +24,7 @@
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.1",
     "graphql": "^15.8.0",
+    "ioredis": "^4.28.5",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.0",
@@ -32,9 +33,14 @@
     "moleculer-db": "^0.8.18",
     "moleculer-db-adapter-mongoose": "^0.8.13",
     "moleculer-db-adapter-mongoose-action": "^1.0.7",
+    "moleculer-i18n-js": "^1.0.3",
+    "moleculer-rabbitmq": "^1.2.0",
     "mongoose": "^5.13.14",
     "mongoose-auto-increment": "^5.0.1",
-    "nats": "^2.7.1"
+    "nanoid": "^3.1.23",
+    "nanoid-dictionary": "^4.3.0",
+    "nats": "^2.7.1",
+    "redlock": "^4.2.0"
   },
   "engines": {
     "node": ">= 10.x.x"

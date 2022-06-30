@@ -28,6 +28,7 @@
     "moleculer-db": "^0.8.18",
     "moleculer-db-adapter-mongoose": "^0.8.13",
     "moleculer-db-adapter-mongoose-action": "^1.0.7",
+    "moleculer-rabbitmq": "^1.2.0",
     "mongoose": "^5.13.14",
     "mongoose-auto-increment": "^5.0.1",
     "nats": "^2.7.1"

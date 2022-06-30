@@ -28,6 +28,7 @@
     "lodash": "^4.17.21",
     "moleculer": "^0.14.0",
     "moleculer-web": "^0.10.4",
+    "moment": "^2.29.3",
     "nats": "^1.4.12",
     "otp-generator": "^4.0.0"
   },

@@ -3,10 +3,17 @@ const { MoleculerError } = require("moleculer").Errors;
 const orderContants = require("../constants/orderContants");
 
 module.exports = async function (ctx) {
+  // let unlock;
   try {
-    const { partnerTransaction, amount, ipnUrl, description, payMethod } =
+    // console.log("meta", ctx.meta);
+    let { partnerTransaction, amount, ipnUrl, description, payMethod } =
       ctx.params.body;
-    let userId = ctx.meta.userId;
+    let userId =  ctx.params.body.userId;
+    // let userId = Math.floor(Math.random() * 2);
+    // unlock = await this.broker.cacher.tryLock(`updateWallet_userId_${userId}`);
+    let intRad = Math.floor(Math.random() * 1000);
+
+    partnerTransaction += intRad;
     let objOrder = {
       partnerTransaction,
       amount,
@@ -25,13 +32,14 @@ module.exports = async function (ctx) {
       };
     }
     let order = await ctx.call("orderModel.create", [objOrder]);
-    console.log(order);
     let res = {};
     let data = {};
     if (_.get(order, "payMethod", null) === orderContants.PAYMETHOD.PAYME) {
+      // setTimeout(async () => {
+      // let userId = Math.floor(Math.random() * 2) + 1;
       let wallet = await ctx.call("walletModel.findOne", [{ userId }]);
       if (_.get(wallet, "balance", 0) < amount) {
-        ctx.call("orderModel.findOneAndUpdate", [
+        ctx.call("orderModel.updateOne", [
           { transaction: order.transaction },
           { state: orderContants.STATE.FAILED },
         ]);
@@ -40,9 +48,28 @@ module.exports = async function (ctx) {
           message: "Số dư trong ví của bạn không đủ",
         };
       } else {
-        await ctx.call("walletModel.updateOne", [
-          { userId },
-          { balance: wallet.balance - amount },
+        amount = intRad % 2 === 0 ? amount : -amount;
+
+        let updatedWallet = await ctx.call("miniProgram.rest.updateWallet", {
+          amount,
+          balance: wallet.balance,
+          userId,
+        });
+
+        // let updatedWallet = await ctx.call("walletModel.findOneAndUpdate", [
+        //   { userId },
+        //   { balance: wallet.balance - amount },
+        // ]);
+        console.log(updatedWallet);
+        let historyTransactionObj = {
+          amount,
+          action: false,
+          userId,
+          balance: updatedWallet.balance,
+        };
+
+        await ctx.call("HistoryTransactionModel.create", [
+          historyTransactionObj,
         ]);
         await ctx.call("orderModel.updateOne", [
           { transaction: order.transaction },
@@ -51,12 +78,14 @@ module.exports = async function (ctx) {
         res.message = "Thanh toán thành công";
         res.code = 1000;
       }
+      // }, 3000);
     } else {
       res.message = "Tạo đơn hàng thanh cồng, vui lòng thanh toán tại link";
       res.code = 1000;
       data.url = "https://atmcard.payment.vn";
       data.transaction = order.transaction;
     }
+    // await unlock();
     return {
       message: res.message,
       code: res.code,
@@ -65,5 +94,7 @@ module.exports = async function (ctx) {
   } catch (err) {
     console.log(err);
     throw new MoleculerError(err.message, err.code, null, null);
+  } finally {
+    // await unlock();
   }
 };

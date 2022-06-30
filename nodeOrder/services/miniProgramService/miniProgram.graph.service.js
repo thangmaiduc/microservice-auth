@@ -32,6 +32,9 @@ module.exports = {
           notifyPayment: {
             action: "miniProgram.graph.notifyPayment",
           },
+          pay: {
+            action: "miniProgram.graph.pay",
+          },
         },
       },
     },
@@ -84,12 +87,23 @@ module.exports = {
       },
       handler: require("./actions/notifyPayment.graph.action"),
     },
-
-    getOrderInfo: {
+    pay: {
+      
       params: {
         input: {
           $$type: "object",
-          transaction: "number",
+          orderId: "number",
+          
+        },
+      },
+      handler: require("./actions/pay.graph.action"),
+    },
+
+    getOrderInfo: {
+      params: {
+        body: {
+          $$type: "object",
+          orderId: "number",
         },
       },
 

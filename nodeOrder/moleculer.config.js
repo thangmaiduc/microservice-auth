@@ -60,8 +60,48 @@ module.exports = {
 
   // Define a cacher.
   // More info: https://moleculer.services/docs/0.14/caching.html
-  cacher: null,
+  cacher: {
+    type: "Redis",
+    options: {
+      // Prefix for keys
+      prefix: "MOL",
+      // set Time-to-live to 30sec.
+      ttl: 30,
+      // Turns Redis client monitoring on.
+      monitor: false,
+      // Redis settings
+      redis: {
+        host: "localhost",
+        port: 49153,
+        password: "redispw",
+        // db: 0
+      },
+      lock: {
+        ttl: 15, //the maximum amount of time you want the resource locked in seconds
+        staleTime: 10, // If the ttl is less than this number, means that the resources are staled
+      },
+      // Redlock settings
+      redlock: {
+        // Redis clients. Support node-redis or ioredis. By default will use the local client.
+        // clients: [client1, client2, client3],
+        // the expected clock drift; for more details
+        // see http://redis.io/topics/distlock
+        driftFactor: 0.01, // time in ms
 
+        // the max number of times Redlock will attempt
+        // to lock a resource before erroring
+        retryCount: 10,
+
+        // the time in ms between attempts
+        retryDelay: 1000, // time in ms
+
+        // the max time in ms randomly added to retries
+        // to improve performance under high contention
+        // see https://www.awsarchitectureblog.com/2015/03/backoff.html
+        retryJitter: 200, // time in ms
+      },
+    },
+  },
   // Define a serializer.
   // Available values: "JSON", "Avro", "ProtoBuf", "MsgPack", "Notepack", "Thrift".
   // More info: https://moleculer.services/docs/0.14/networking.html#Serialization
@@ -150,7 +190,7 @@ module.exports = {
 
   // Enable/disable built-in metrics function. More info: https://moleculer.services/docs/0.14/metrics.html
   metrics: {
-    enabled: true,
+    enabled: false,
     // Available built-in reporters: "Console", "CSV", "Event", "Prometheus", "Datadog", "StatsD"
     reporter: {
       type: "Prometheus",
