@@ -7,7 +7,6 @@ module.exports = gql`
     createOrder(input: OrderInput): CreateOrderInfoResponse
     notifyPayment(input: NotifyPaymentInput): NotifyPaymentResponse
     pay(input: payInput): PayResponse
-    
   }
 
   type OrderInfo {
@@ -18,7 +17,15 @@ module.exports = gql`
     payMethod: PaymentMethodUITypeEnum
     state: OrderPaymentStateEnum
     orderId: Int
-    userId: Int
+    user: UserInfo
+  }
+  type UserInfo {
+    id: Int
+    fullName: String
+    phone: String
+    email: String
+    gender: String
+    avatar: String
   }
   type GetOrderInfoResponse {
     message: String

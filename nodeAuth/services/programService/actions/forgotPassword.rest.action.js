@@ -2,17 +2,24 @@ const _ = require("lodash");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { MoleculerError } = require("moleculer").Errors;
-const bcrypt= require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const otpGenerator = require("otp-generator");
 module.exports = async function (ctx) {
   try {
     const { email } = ctx.params.body;
-    const user =await  ctx.call("userModel.findOne", [{ email }])
-    if(!user){
-        return {
-            code:400,
-            msg: 'Không thấy tài khoản của bạn'
-        }
+    const user = await ctx.call("userModel.findOne", [{ email }]);
+    if (!user) {
+      return {
+        code: 400,
+        msg: "Không thấy tài khoản của bạn",
+      };
+    }
+    const checkOtp = await ctx.call("otpModel.findOne", [{ userId: user.id }]);
+    if (_.get(checkOtp, "otp", null) != null) {
+      return {
+        code: 400,
+        msg: "Đã gửi email đổi mật khẩu, vui lòng xem lại email và thử lại sau",
+      };
     }
     const OTP = otpGenerator.generate(6, {
       digits: true,
@@ -40,15 +47,23 @@ module.exports = async function (ctx) {
           };
         } catch (error) {}
       });
-      console.log(OTP);
-    // var passwordEncrypt =await crypto.AES.encrypt(OTP, process.env.JWT_SECRETKEY).toString();
+    console.log(OTP);
     let passwordHash = await bcrypt.hash(OTP, 8);
-    await ctx.call("userModel.updateOne", [{ email }, {password: passwordHash}]);
+    await ctx.call("userModel.updateOne", [
+      { email },
+      { password: passwordHash },
+    ]);
+    await ctx.call("otpModel.create", [
+      {
+        userId: user.id,
+        otp: passwordHash,
+      },
+    ]);
 
-    return{ 
-        msg: "Mật khẩu mới đã gửi tới email của bạn",
-        code:200
- }
+    return {
+      msg: "Mật khẩu mới đã gửi tới email của bạn",
+      code: 200,
+    };
   } catch (err) {
     console.log(err);
     return err.message;
