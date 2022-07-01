@@ -6,17 +6,12 @@ module.exports = async function (ctx) {
   try {
     let orders = await ctx.call("orderModel.findMany", []);
     return {
-      message:'thành công',
-      successed:true,
-      orderInfo:orders,
+      orderInfo: orders,
     };
   } catch (err) {
-    
-    return{
-      successed:false,
-      message:'thất bại',
-      orderInfo:[],
-    }
+    return {
+      orderInfo: [],
+    };
     console.log(err);
     throw new MoleculerError(err.message, err.code, null, null);
   }

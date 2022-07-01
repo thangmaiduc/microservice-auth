@@ -1,9 +1,11 @@
 const gql = require("moleculer-apollo-server").moleculerGql;
 
 module.exports = gql`
-  type Order {
+  type QueryOrder {
     getOrder(body: GetOrderInput!): GetOrderInfoResponse
     getOrders: ListOrderResponse
+  }
+  type MutationOrder {
     createOrder(input: OrderInput): CreateOrderInfoResponse
     notifyPayment(input: NotifyPaymentInput): NotifyPaymentResponse
     pay(input: payInput): PayResponse
@@ -19,22 +21,11 @@ module.exports = gql`
     orderId: Int
     user: UserInfo
   }
-  type UserInfo {
-    id: Int
-    fullName: String
-    phone: String
-    email: String
-    gender: String
-    avatar: String
-  }
+
   type GetOrderInfoResponse {
-    message: String
-    successed: Boolean
     orderInfo: OrderInfo
   }
   type ListOrderResponse {
-    message: String
-    successed: Boolean
     orderInfo: [OrderInfo]
   }
 

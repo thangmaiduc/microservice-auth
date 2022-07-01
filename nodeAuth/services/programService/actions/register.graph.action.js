@@ -12,8 +12,8 @@ module.exports = async function (ctx) {
 
     if (!_.isNil(userCheck)) {
       return {
-        code: 1001,
-        msg: "Email đã đăng kí",
+        successed: false,
+        message: "Email đã đăng kí",
       };
     }
     // var hash = crypto.MD5(process.env.JWT_SECRETKEY).toString();
@@ -32,8 +32,8 @@ module.exports = async function (ctx) {
     // });
 
     return {
-      code: 1000,
-      msg: "Đăng kí thành công",
+      successed: true,
+      message: "Thành công",
       user,
     };
   } catch (err) {

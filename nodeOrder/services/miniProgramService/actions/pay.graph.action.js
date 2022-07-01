@@ -27,6 +27,7 @@ module.exports = async function (ctx) {
       transaction,
       orderId,
     };
+    unlock = this.broker.cacher.lock("Miniprogram.pay_userId:" + userId);
     let payment = await ctx.call("paymentModel.create", [paymentObj]);
     let res = {};
     let data = {};
@@ -43,7 +44,6 @@ module.exports = async function (ctx) {
           message: "Số dư trong ví của bạn không đủ",
         };
       } else {
-        unlock = this.broker.cacher.lock("Miniprogram.pay_userId:" + userId);
         // amount = intRad % 2 === 0 ? amount : -amount;
         let updatedWallet = await ctx.call("walletModel.findOneAndUpdate", [
           { userId },

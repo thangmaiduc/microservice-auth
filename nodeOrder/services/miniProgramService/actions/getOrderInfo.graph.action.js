@@ -10,16 +10,13 @@ module.exports = async function (ctx) {
     let order = await ctx.call("orderModel.findOne", [{ orderId, userId }]);
     if (!order) {
       return {
-        successed: false,
-        message: "Thông tin đơn hàng không tồn tại",
+        orderInfo: {},
       };
     }
     let user = await ctx.call("userModel.findOne", [{ id: userId }]);
     delete user.password;
-    order.user = user
+    order.user = user;
     return {
-      successed: true,
-      message: "Thành công",
       orderInfo: order,
     };
   } catch (err) {

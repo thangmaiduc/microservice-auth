@@ -11,7 +11,6 @@ module.exports = async function (ctx) {
     // console.log("meta", ctx.meta);
     let { orderId } = ctx.params.body;
     let userId = ctx.meta.userId || ctx.params.body.userId;
-    unlock =await this.broker.cacher.lock("Miniprogram.pay_userId:" + userId);
 
     let order = await ctx.call("orderModel.findOne", [
       { orderId, state: orderContants.STATE.PENDING },
@@ -28,6 +27,7 @@ module.exports = async function (ctx) {
       transaction,
       orderId,
     };
+    unlock = await this.broker.cacher.lock("Miniprogram.pay_userId:" + userId);
     let payment = await ctx.call("paymentModel.create", [paymentObj]);
     let res = {};
     let data = {};
@@ -85,7 +85,6 @@ module.exports = async function (ctx) {
     console.log(err);
     throw new MoleculerError(err.message, err.code, null, null);
   } finally {
-    if(_.isFunction(unlock))
-    await unlock();
+    if (_.isFunction(unlock)) await unlock();
   }
 };

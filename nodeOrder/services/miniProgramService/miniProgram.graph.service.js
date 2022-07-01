@@ -19,13 +19,15 @@ module.exports = {
       input: require("./graph/input"),
       enum: require("./graph/enum"),
       resolvers: {
-        Order: {
+        QueryOrder: {
           getOrder: {
             action: "miniProgram.graph.getOrderInfo",
           },
           getOrders: {
             action: "miniProgram.graph.getOrders",
           },
+        },
+        MutationOrder: {
           createOrder: {
             action: "miniProgram.graph.createOrder",
           },
@@ -60,19 +62,18 @@ module.exports = {
         },
       },
       // graphql: {
-        
+
       // },
       handler: require("./actions/createOrder.graph.action"),
     },
     getOrders: {
       graphql: {
-        query: "Order: Order",
-        mutation: "Order: Order",
+        query: "Order: QueryOrder",
+        mutation: "Order: MutationOrder",
       },
       handler: require("./actions/getOrders.graph.action"),
     },
     notifyPayment: {
-      
       params: {
         input: {
           $$type: "object",
@@ -88,12 +89,10 @@ module.exports = {
       handler: require("./actions/notifyPayment.graph.action"),
     },
     pay: {
-      
       params: {
         input: {
           $$type: "object",
           orderId: "number",
-          
         },
       },
       handler: require("./actions/pay.graph.action"),
