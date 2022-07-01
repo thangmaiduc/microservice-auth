@@ -4,7 +4,7 @@ const orderContants = require("../constants/orderContants");
 
 module.exports = async function (ctx) {
   try {
-    const { transaction, amount, state } = ctx.params.body;
+    const { supplierTransaction, transaction, amount, state } = ctx.params.body;
     console.log(typeof transaction);
     // let objOrder = {
     //   transaction,
@@ -19,6 +19,15 @@ module.exports = async function (ctx) {
       return {
         code: 1001,
         message: "Mã giao dịch không tồn tại",
+      };
+    }
+    let checkSupplierRes = await ctx.call("supplierResponseModel.findOne", [
+      { supplierTransaction },
+    ]);
+    if (checkSupplierRes) {
+      return {
+        code: 1001,
+        message: "Mã giao dịch đối tác đã tồn tại",
       };
     }
     let order = await ctx.call("orderModel.findOneAndUpdate", [
@@ -37,7 +46,7 @@ module.exports = async function (ctx) {
     }
 
     await ctx.call("supplierResponseModel.create", [
-      { transaction, amount, state },
+      { supplierTransaction, response, transaction, amount, state },
     ]);
 
     return {

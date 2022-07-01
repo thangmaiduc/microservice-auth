@@ -6,6 +6,10 @@ const supplierResponseContants = require("../constants/supplierResponseContants"
 autoIncrement.initialize(mongoose);
 
 const schema = mongoose.Schema({
+  supplierTransaction:{
+    type: String,
+    unique: true
+  },
   transaction: {
     type: Number,
     required: true,
@@ -24,6 +28,9 @@ const schema = mongoose.Schema({
     require: true,
     unique: true,
   },
+  response:{
+    type:Object
+  }
 
   
 });
