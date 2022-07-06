@@ -48,14 +48,14 @@ module.exports = {
    */
   actions: {
     pubCreateOrder: {
-      rest: {
-        fullPath: "/orders",
-        method: "POST",
-        auth: {
-          strategies: ["Default"],
-          mode: "required", // 'required', 'optional', 'try'
-        },
-      },
+      // rest: {
+      //   fullPath: "/orders",
+      //   method: "POST",
+      //   auth: {
+      //     strategies: ["Default"],
+      //     mode: "required", // 'required', 'optional', 'try'
+      //   },
+      // },
 
       params: {
         body: {
@@ -80,14 +80,14 @@ module.exports = {
           prefetch: 1,
         },
       },
-      // rest: {
-      //   fullPath: "/orders",
-      //   method: "POST",
-      //   auth: {
-      //     strategies: ["Default"],
-      //     mode: "required", // 'required', 'optional', 'try'
-      //   },
-      // },
+      rest: {
+        fullPath: "/orders",
+        method: "POST",
+        auth: {
+          strategies: ["Default"],
+          mode: "required", // 'required', 'optional', 'try'
+        },
+      },
       params: {
         body: {
           $$type: "object",

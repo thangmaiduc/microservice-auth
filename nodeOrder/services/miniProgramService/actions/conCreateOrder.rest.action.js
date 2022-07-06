@@ -11,7 +11,12 @@ module.exports = async function (ctx) {
     // console.log("meta", ctx.meta);
     let { partnerTransaction, amount, ipnUrl, description, payMethod } =
       ctx.params.body;
-    let userId = ctx.meta.userId || ctx.params.body.userId;
+    let userId =
+      _.get(ctx, "meta.userId", null) != null
+        ? ctx.meta.userId
+        : ctx.params.body.userId;
+    console.log(userId);
+
     let intRad = Math.floor(Math.random() * 1000);
     // unlock = this.broker.cacher.lock("createOrder_userId:" + userId);
     partnerTransaction += intRad;
@@ -51,5 +56,5 @@ module.exports = async function (ctx) {
   } catch (err) {
     console.log(err);
     throw new MoleculerError(err.message, err.code, null, null);
-  } 
+  }
 };

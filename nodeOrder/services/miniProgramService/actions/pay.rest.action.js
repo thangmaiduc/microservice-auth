@@ -26,6 +26,7 @@ module.exports = async function (ctx) {
     let paymentObj = {
       transaction,
       orderId,
+      method: order.payMethod
     };
     unlock = await this.broker.cacher.lock("Miniprogram.pay_userId:" + userId);
     let payment = await ctx.call("paymentModel.create", [paymentObj]);

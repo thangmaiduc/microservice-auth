@@ -3,7 +3,9 @@ const autoIncrement = require("mongoose-auto-increment");
 
 const _ = require("lodash");
 const orderContants = require("../constants/orderContants");
+const castAggregation = require("mongoose-cast-aggregation");
 
+mongoose.plugin(castAggregation);
 autoIncrement.initialize(mongoose);
 
 const Schema = mongoose.Schema(
