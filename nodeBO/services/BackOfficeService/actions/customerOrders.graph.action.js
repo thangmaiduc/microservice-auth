@@ -29,6 +29,7 @@ module.exports = async function (ctx) {
           {
             $project: {
               orderId: 1.0,
+              state: 1.0,
               createdAt: {
                 $dateToString: {
                   date: "$createdAt",
