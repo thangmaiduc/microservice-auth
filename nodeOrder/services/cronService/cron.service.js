@@ -63,7 +63,7 @@ module.exports = {
     //       .then((data) => {
     //         console.log("Oh!", data);
     //       });
-       
+
     //   },
     //   runOnInit: function () {
     //     console.log("randomUser is created");
@@ -71,7 +71,6 @@ module.exports = {
     //   // manualStart: true,
     //   timeZone: "America/Nipigon",
     // },
-    
   ],
 
   actions: {

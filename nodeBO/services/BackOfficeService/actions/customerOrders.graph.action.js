@@ -7,9 +7,7 @@ const awaitAsyncForeach = require("await-async-foreach");
 module.exports = async function (ctx) {
   try {
     let { fromDate, toDate } = ctx.params.body;
-    // const startDate = moment(fromDate).startOf("day").toDate();
-    // const endDate = moment(toDate).endOf("day").toDate();
-    // console.log(startDate, endDate);
+    
     if (!this.isValidDate(fromDate)) {
       throw new MoleculerError("Tham số truyền vào không hợp lệ", "422");
     }
@@ -29,10 +27,22 @@ module.exports = async function (ctx) {
             },
           },
           {
+            $project: {
+              orderId: 1.0,
+              createdAt: {
+                $dateToString: {
+                  date: "$createdAt",
+                  format: "%d-%m-%Y",
+                },
+              },
+            },
+          },
+          {
             $lookup: {
               from: "orders",
               localField: "orderId",
               foreignField: "orderId",
+
               as: "order",
             },
           },
@@ -59,15 +69,7 @@ module.exports = async function (ctx) {
             $group: {
               _id: {
                 userId: "$order.userId",
-                date: {
-                  $dayOfMonth: "$createdAt",
-                },
-                month: {
-                  $month: "$createdAt",
-                },
-                year: {
-                  $year: "$createdAt",
-                },
+                date: "$createdAt",
               },
               numberTransaction: {
                 $count: {},
@@ -104,8 +106,6 @@ module.exports = async function (ctx) {
           },
           {
             $sort: {
-              "_id.year": 1,
-              "_id.month": 1,
               "_id.date": 1,
               "_id.userId": 1,
             },
@@ -126,6 +126,7 @@ module.exports = async function (ctx) {
               },
             },
           },
+
           {
             $lookup: {
               from: "orders",
@@ -139,12 +140,7 @@ module.exports = async function (ctx) {
               path: "$order",
             },
           },
-          {
-            $project: {
-              state: 1.0,
-              "order.userId": 1.0,
-            },
-          },
+
           userId !== ""
             ? {
                 $match: {
@@ -166,7 +162,6 @@ module.exports = async function (ctx) {
       ],
       { timeout: 60000 }
     );
-
     const promise3 = ctx.call(
       "orderModel.aggregate",
       [
@@ -231,15 +226,8 @@ module.exports = async function (ctx) {
     // let user =_.find(users,{id: 0})
     data = await promise1;
     await awaitAsyncForeach(data, async (piece) => {
-      piece.date = new Date(
-        piece._id.year,
-        piece._id.month - 1,
-        piece._id.date
-      );
-      piece.date.setMinutes(
-        piece.date.getMinutes() - piece.date.getTimezoneOffset()
-      );
-      piece.date = moment(piece.date).format("DD-MM-YYYY");
+      
+      piece.date = piece._id.date;
       piece.userId = piece._id.userId;
       delete piece._id;
       let user = _.find(users, { id: piece.userId });

@@ -36,10 +36,22 @@ module.exports = async function (ctx) {
             },
           },
           {
+            $project: {
+              orderId: 1.0,
+              createdAt: {
+                $dateToString: {
+                  date: "$createdAt",
+                  format: "%d-%m-%Y",
+                },
+              },
+            },
+          },
+          {
             $lookup: {
               from: "orders",
               localField: "orderId",
               foreignField: "orderId",
+
               as: "order",
             },
           },
@@ -66,15 +78,7 @@ module.exports = async function (ctx) {
             $group: {
               _id: {
                 userId: "$order.userId",
-                date: {
-                  $dayOfMonth: "$createdAt",
-                },
-                month: {
-                  $month: "$createdAt",
-                },
-                year: {
-                  $year: "$createdAt",
-                },
+                date: "$createdAt",
               },
               numberTransaction: {
                 $count: {},
@@ -111,8 +115,6 @@ module.exports = async function (ctx) {
           },
           {
             $sort: {
-              "_id.year": 1,
-              "_id.month": 1,
               "_id.date": 1,
               "_id.userId": 1,
             },
@@ -133,6 +135,7 @@ module.exports = async function (ctx) {
               },
             },
           },
+
           {
             $lookup: {
               from: "orders",
@@ -146,12 +149,7 @@ module.exports = async function (ctx) {
               path: "$order",
             },
           },
-          {
-            $project: {
-              state: 1.0,
-              "order.userId": 1.0,
-            },
-          },
+
           userId !== ""
             ? {
                 $match: {
@@ -173,7 +171,6 @@ module.exports = async function (ctx) {
       ],
       { timeout: 60000 }
     );
-
     const promise3 = ctx.call(
       "orderModel.aggregate",
       [
@@ -240,15 +237,7 @@ module.exports = async function (ctx) {
     data = await promise1;
     if (_.isArray(numCustomer)) numCus = numCustomer[0].numCustomer;
     await awaitAsyncForeach(data, async (piece) => {
-      piece.date = new Date(
-        piece._id.year,
-        piece._id.month - 1,
-        piece._id.date
-      );
-      piece.date.setMinutes(
-        piece.date.getMinutes() - piece.date.getTimezoneOffset()
-      );
-      piece.date = moment(piece.date).format("DD-MM-YYYY");
+      piece.date = piece._id.date;
       piece.userId = piece._id.userId;
       delete piece._id;
       let user = _.find(users, { id: piece.userId });
@@ -295,7 +284,7 @@ module.exports = async function (ctx) {
       });
     });
     base64 = await promise;
-    
+
     console.timeEnd("time total");
     return {
       msg: "thanh cong",
