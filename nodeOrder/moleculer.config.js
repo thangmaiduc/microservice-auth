@@ -32,7 +32,7 @@ module.exports = {
   nodeID: null,
   // Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
   metadata: {},
-  requestTimeout: 30000,
+  requestTimeout: 60*1000,
 
   // Enable/disable logging or use custom logger. More info: https://moleculer.services/docs/0.14/logging.html
   // Available logger types: "Console", "File", "Pino", "Winston", "Bunyan", "debug", "Log4js", "Datadog"
@@ -109,7 +109,7 @@ module.exports = {
   serializer: "JSON",
 
   // Number of milliseconds to wait before reject a request with a RequestTimeout error. Disabled: 0
-  requestTimeout: 10 * 1000,
+  requestTimeout: 60 * 1000,
 
   // Retry policy settings. More info: https://moleculer.services/docs/0.14/fault-tolerance.html#Retry
   retryPolicy: {

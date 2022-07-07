@@ -6,15 +6,21 @@ let moment = require("moment");
 module.exports = async function (ctx) {
   try {
     let { fromDate, toDate } = ctx.params.body;
+    if (!this.isValidDate(fromDate)) {
+      throw new MoleculerError("Tham số truyền vào không hợp lệ", "422");
+    }
+    if (!this.isValidDate(toDate)) {
+      throw new MoleculerError("Tham số truyền vào không hợp lệ", "422");
+    }
     console.log(fromDate, toDate);
     let method = ctx.params.body.method || "";
-    let aggregate = await ctx.call("orderModel.aggregate", [
+    let aggregate = await ctx.call("paymentModel.aggregate", [
       [
         method != ""
           ? {
               $match: {
                 createdAt: { $gte: fromDate, $lte: toDate },
-                payMethod:method,
+                method,
               },
             }
           : {
@@ -35,13 +41,13 @@ module.exports = async function (ctx) {
       ],
     ]);
     console.log(aggregate);
-    const numberTransaction1 = await ctx.call("orderModel.aggregate", [
+    const numberTransaction1 = await ctx.call("paymentModel.aggregate", [
       [
         method != ""
           ? {
               $match: {
                 createdAt: { $gte: fromDate, $lte: toDate },
-                payMethod:method,
+                method,
               },
             }
           : {
@@ -124,7 +130,8 @@ module.exports = async function (ctx) {
     });
     console.log(aggregate);
     aggregate.forEach((data) => {
-      res[_.camelCase('number Transaction '+data.state)] = data.numberTransaction;
+      res[_.camelCase("number Transaction " + data.state)] =
+        data.numberTransaction;
     });
     console.log(aggregate);
     numberTransaction1.forEach((data) => {
@@ -143,4 +150,3 @@ module.exports = async function (ctx) {
     return ctx.params;
   }
 };
-

@@ -12,15 +12,21 @@ module.exports = async function (ctx) {
     // Add Worksheets to the workbook
     let ws = wb.addWorksheet("Sheet 1");
     let { fromDate, toDate } = ctx.params.body;
+    if (!this.isValidDate(fromDate)) {
+      throw new MoleculerError("Tham số truyền vào không hợp lệ", "422");
+    }
+    if (!this.isValidDate(toDate)) {
+      throw new MoleculerError("Tham số truyền vào không hợp lệ", "422");
+    }
     let method = ctx.params.body.method || "";
     console.log(method);
-    let aggregate = await ctx.call("orderModel.aggregate", [
+    let aggregate = await ctx.call("paymentModel.aggregate", [
       [
-        method!=""
+        method != ""
           ? {
               $match: {
                 createdAt: { $gte: fromDate, $lte: toDate },
-                payMethod:method,
+                method,
               },
             }
           : {
@@ -41,13 +47,13 @@ module.exports = async function (ctx) {
       ],
     ]);
     console.log(aggregate);
-    const orderAggre = await ctx.call("orderModel.aggregate", [
+    const orderAggre = await ctx.call("paymentModel.aggregate", [
       [
-        method!=""
+        method != ""
           ? {
               $match: {
                 createdAt: { $gte: fromDate, $lte: toDate },
-                payMethod:method,
+                method,
               },
             }
           : {

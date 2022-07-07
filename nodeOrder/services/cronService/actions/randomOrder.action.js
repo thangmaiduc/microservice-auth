@@ -14,7 +14,7 @@ module.exports = async function (ctx) {
       try {
         let Date = getRandomDate();
         let intRad = Math.floor(Math.random() * 1000) + 100;
-        let intRad2 = Math.floor(Math.random() * 1000) + 3;
+        let intRad2 = Math.floor(Math.random() * 200) + 3;
         let partnerTransaction = faker.random.numeric(10);
         let objOrder = {
           partnerTransaction,
@@ -23,10 +23,6 @@ module.exports = async function (ctx) {
           description: "",
           userId: intRad2,
           createdAt: Date,
-          payMethod: faker1.random.arrayElement(
-            _.values(orderContants.PAYMETHOD)
-          ),
-          state: faker1.random.arrayElement(_.values(orderContants.STATE)),
         };
         let order = await ctx.call("orderModel.create", [objOrder]);
         let transaction = nanoId();
@@ -34,8 +30,8 @@ module.exports = async function (ctx) {
           transaction,
           createdAt: Date,
           orderId: order.orderId,
-          method: order.payMethod,
-          state: order.state,
+          method:  faker1.random.arrayElement(_.values(orderContants.PAYMETHOD)),
+          state: faker1.random.arrayElement(_.values(orderContants.STATE)),
         };
         let payment = await ctx.call("paymentModel.create", [paymentObj]);
       } catch (e) {
@@ -60,7 +56,7 @@ function getRandomInt(min, max) {
 
 function getRandomDate() {
   // aprox nr of days since 1970 untill 2000: 30years * 365 days
-  let nr_days1 = 52.5*365;
+  let nr_days1 = 51.75*365;
   // aprox nr of days since 1950 untill 1970: 20years * 365 days
   let nr_days2 = 51.5*365;
 

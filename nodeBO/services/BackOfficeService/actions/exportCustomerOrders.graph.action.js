@@ -13,85 +13,76 @@ module.exports = async function (ctx) {
     // Add Worksheets to the workbook
     let ws = wb.addWorksheet("Sheet 1");
     let { fromDate, toDate } = ctx.params.body;
-
+    if (!this.isValidDate(fromDate)) {
+      throw new MoleculerError("Tham số truyền vào không hợp lệ", "422");
+    }
+    if (!this.isValidDate(toDate)) {
+      throw new MoleculerError("Tham số truyền vào không hợp lệ", "422");
+    }
     // const startDate = moment(fromDate).startOf("day").toDate();
     // const endDate = moment(toDate).endOf("day").toDate();
     // console.log(startDate, endDate);
     let userId = ctx.params.body.userId || "";
     console.log(fromDate, toDate);
-    let aggregate = await ctx.call("orderModel.aggregate", [
+    const promise1 = ctx.call(
+      "paymentModel.aggregate",
       [
-        userId
-          ? {
-              $match: {
-                createdAt: { $gte: fromDate, $lte: toDate },
-                userId,
-              },
-            }
-          : {
-              $match: {
-                createdAt: { $gte: fromDate, $lte: toDate },
-              },
-            },
-        {
-          $group: {
-            _id: {
-              state: "$state",
-            },
-            numberTransaction: {
-              $count: {},
+        [
+          {
+            $match: {
+              createdAt: { $gte: fromDate, $lte: toDate },
             },
           },
-        },
-      ],
-    ]);
-    let res = {};
-
-    let numFail = 0;
-    aggregate.forEach((data) => {
-      data.state = data._id.state;
-      delete data._id;
-      if (data.state !== "PENDING" && data.state !== "SUCCEEDED") {
-        numFail += data.numberTransaction;
-      }
-    });
-    const data = await ctx.call("orderModel.aggregate", [
-      [
-        userId
-          ? {
-              $match: {
-                createdAt: { $gte: fromDate, $lte: toDate },
-                userId,
-              },
-            }
-          : {
-              $match: {
-                createdAt: { $gte: fromDate, $lte: toDate },
-              },
+          {
+            $lookup: {
+              from: "orders",
+              localField: "orderId",
+              foreignField: "orderId",
+              as: "order",
             },
-        {
-          $group: {
-            _id: {
-              userId: "$userId",
-              date: {
-                $dayOfMonth: "$createdAt",
-              },
-              month: {
-                $month: "$createdAt",
-              },
-              year: {
-                $year: "$createdAt",
-              },
+          },
+          {
+            $unwind: {
+              path: "$order",
             },
-            numberTransaction: {
-              $count: {},
+          },
+          {
+            $project: {
+              state: 1.0,
+              "order.userId": 1.0,
+              createdAt: 1.0,
             },
-            numberTransactionSucceeded: {
-              $accumulator: {
-                init: `function () {
+          },
+          userId !== ""
+            ? {
+                $match: {
+                  "order.userId": userId,
+                },
+              }
+            : { $match: {} },
+          {
+            $group: {
+              _id: {
+                userId: "$order.userId",
+                date: {
+                  $dayOfMonth: "$createdAt",
+                },
+                month: {
+                  $month: "$createdAt",
+                },
+                year: {
+                  $year: "$createdAt",
+                },
+              },
+              numberTransaction: {
+                $count: {},
+              },
+              numberTransactionSucceeded: {
+                $accumulator: {
+                  init: `function () {
                   return { count: 0 };
                 }`,
-                accumulate: `function (state, numSucceeded) {
+                  accumulate: `function (state, numSucceeded) {
                   return {
                     count:
                       numSucceeded === "SUCCEEDED"
@@ -99,76 +90,151 @@ module.exports = async function (ctx) {
                         : state.count,
                   };
                 }`,
-                accumulateArgs: ["$state"], // Argument required by the accumulate function
-                merge: `function (state1, state2) {
+                  accumulateArgs: ["$state"], // Argument required by the accumulate function
+                  merge: `function (state1, state2) {
                   // When the operator performs a merge,
                   return {
                     // add the fields from the two states
                     count: state1.count + state2.count,
                   };
                 }`,
-                finalize: `function (state) {
+                  finalize: `function (state) {
                   // After collecting the results from all documents,
                   return state.count; // calculate the average
                 }`,
-                lang: "js",
+                  lang: "js",
+                },
               },
             },
           },
-        },
-        {
-          $sort: {
-            "_id.year": 1,
-            "_id.month": 1,
-            "_id.date": 1,
+          {
+            $sort: {
+              "_id.year": 1,
+              "_id.month": 1,
+              "_id.date": 1,
+              "_id.userId": 1,
+            },
           },
-        },
+        ],
       ],
-    ]);
-    aggregate = aggregate.filter((piece) => {
-      if (piece.state === "FAILED") piece.numberTransaction = numFail;
-      return piece.state === "PENDING" || piece.state === "FAILED";
-    });
-    aggregate.forEach((piece, index) => {
-      let row = index + 1;
-      ws.cell(row, 1).string("PAYMENT " + piece.state);
-      ws.cell(row, 2).number(piece.numberTransaction);
-    });
-    // ws
-    // .cell(1,1)
-    // .string(data.state)
-    // .style(style);
-
-    let numCustomer = await ctx.call("orderModel.aggregate", [
+      { timeout: 60000 }
+    );
+    const promise2 = ctx.call(
+      "paymentModel.aggregate",
       [
-        userId
-          ? {
-              $match: {
-                createdAt: { $gte: fromDate, $lte: toDate },
-                userId,
+        [
+          {
+            $match: {
+              createdAt: {
+                $gte: fromDate,
+                $lte: toDate,
               },
-            }
-          : {
-              $match: {
-                createdAt: { $gte: fromDate, $lte: toDate },
-              },
-            },
-        {
-          $group: {
-            _id: {
-              userId: "$userId",
             },
           },
-        },
-        {
-          $count: "numCustomer",
-        },
+          {
+            $lookup: {
+              from: "orders",
+              localField: "orderId",
+              foreignField: "orderId",
+              as: "order",
+            },
+          },
+          {
+            $unwind: {
+              path: "$order",
+            },
+          },
+          {
+            $project: {
+              state: 1.0,
+              "order.userId": 1.0,
+            },
+          },
+          userId !== ""
+            ? {
+                $match: {
+                  "order.userId": userId,
+                },
+              }
+            : { $match: {} },
+          {
+            $group: {
+              _id: {
+                state: "$state",
+              },
+              numberTransaction: {
+                $count: {},
+              },
+            },
+          },
+        ],
       ],
-    ]);
+      { timeout: 60000 }
+    );
+
+    const promise3 = ctx.call(
+      "orderModel.aggregate",
+      [
+        [
+          userId
+            ? {
+                $match: {
+                  createdAt: { $gte: fromDate, $lte: toDate },
+                  userId,
+                },
+              }
+            : {
+                $match: {
+                  createdAt: { $gte: fromDate, $lte: toDate },
+                },
+              },
+          {
+            $group: {
+              _id: {
+                userId: "$userId",
+              },
+            },
+          },
+          {
+            $count: "numCustomer",
+          },
+        ],
+      ],
+      { timeout: 60000 }
+    );
+    let res = {};
+
+    let numFail = 0;
+    numCustomer = await promise3;
     let numCus;
     if (_.isArray(numCustomer)) numCus = numCustomer[0].numCustomer;
-    let users =await  ctx.call("userModel.findMany", [{},{id:1, email:1, fullName:1}]);
 
+    aggregate = await promise2;
+
+    // await data;
+    aggregate.forEach((data) => {
+      data.state = data._id.state;
+      delete data._id;
+      if (data.state !== "PENDING" && data.state !== "SUCCEEDED") {
+        numFail += data.numberTransaction;
+      }
+    });
+
+    aggregate = aggregate.filter((data) => {
+      if (data.state === "FAILED") data.numberTransaction = numFail;
+      return data.state === "PENDING" || data.state === "FAILED";
+    });
+    aggregate.forEach((data) => {
+      res[_.camelCase("number Transaction " + data.state)] =
+        data.numberTransaction;
+    });
+
+    let users = await ctx.call("userModel.findMany", [
+      {},
+      { id: 1, email: 1, fullName: 1 },
+    ]);
+    // let user =_.find(users,{id: 0})
+    data = await promise1;
     await awaitAsyncForeach(data, async (piece) => {
       piece.date = new Date(
         piece._id.year,
@@ -181,10 +247,11 @@ module.exports = async function (ctx) {
       piece.date = moment(piece.date).format("DD-MM-YYYY");
       piece.userId = piece._id.userId;
       delete piece._id;
-      let user =_.find(users,{id: piece.userId})
+      let user = _.find(users, { id: piece.userId });
       piece.fullName = _.get(user, "fullName", "");
       piece.email = _.get(user, "email", "");
     });
+
     ws.cell(3, 1).string("Tổng khách hàng");
     ws.cell(3, 2).number(numCus);
     ws.cell(4, 1).string("Tên KH");
@@ -217,7 +284,7 @@ module.exports = async function (ctx) {
           fs.readFile("thong-ke-KH.xls", "base64", function (err, data) {
             if (err) console.log(err);
             // console.log("data");
-           resolve(data)
+            resolve(data);
           });
         }
       });

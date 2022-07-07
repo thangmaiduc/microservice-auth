@@ -32,7 +32,6 @@ module.exports = {
             action: "BackOffice.graph.customerOrders",
           },
         },
-        
       },
     },
   },
@@ -49,7 +48,10 @@ module.exports = {
       },
     },
     exportOrderStatistics: {
-      
+      auth: {
+        strategies: ["Default"],
+        mode: "admin",
+      },
       params: {
         body: {
           $$type: "object",
@@ -61,7 +63,6 @@ module.exports = {
       handler: require("./actions/exportOrderStatistics.graph.action"),
     },
     exportCustomerOrders: {
-     
       params: {
         body: {
           $$type: "object",
@@ -73,7 +74,10 @@ module.exports = {
       handler: require("./actions/exportCustomerOrders.graph.action"),
     },
     orderStatistics: {
-      
+      // auth: {
+      //   strategies: ["Default"],
+      //   mode: "admin",
+      // },
       params: {
         body: {
           $$type: "object",
@@ -85,7 +89,6 @@ module.exports = {
       handler: require("./actions/orderStatistics.graph.action"),
     },
     customerOrders: {
-     
       params: {
         body: {
           $$type: "object",

@@ -3,8 +3,8 @@ module.exports = {
     PENDING: "PENDING",
     SUCCEEDED: "SUCCEEDED",
     FAILED: "FAILED",
-    CANCELED: "CANCELED",
-    EXPIRED: "EXPIRED",
+    // CANCELED: "CANCELED",
+    // EXPIRED: "EXPIRED",
   },
   PAYMETHOD: {
     PAYME: "PAYME",

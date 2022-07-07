@@ -4,7 +4,9 @@ const autoIncrement = require("mongoose-auto-increment");
 const paymentContants = require("../constants/paymentContants");
 
 autoIncrement.initialize(mongoose);
+const castAggregation = require("mongoose-cast-aggregation");
 
+mongoose.plugin(castAggregation);
 const schema = mongoose.Schema(
   {
     transaction: {
@@ -15,6 +17,7 @@ const schema = mongoose.Schema(
     orderId: {
       type: Number,
     },
+    
     id: {
       type: Number,
       require: true,

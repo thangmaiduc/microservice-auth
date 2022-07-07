@@ -43,11 +43,6 @@ const Schema = mongoose.Schema(
       enum: _.values(orderContants.STATE),
       default: "PENDING",
     },
-    payMethod: {
-      type: String,
-      enum: _.values(orderContants.PAYMETHOD),
-      default: "PAYME",
-    },
   },
   {
     timestamps: true,
